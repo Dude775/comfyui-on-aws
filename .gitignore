@@ -1,0 +1,36 @@
+# Terraform state and real variables never leave the operator machine
+**/.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+crash.log
+terraform.tfvars
+*.auto.tfvars
+!*.tfvars.example
+
+# Credentials
+*.pem
+*.key
+.env
+.env.*
+credentials*
+.aws/
+
+# Private content: prompts, inputs, generated images, exported workflows
+pipeline/prompts.txt
+pipeline/workflows/*.json
+!pipeline/workflows/*.example.json
+out/
+outputs/
+*.png
+*.jpg
+*.jpeg
+*.webp
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+.venv/
+*.egg-info/
