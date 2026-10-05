@@ -1,0 +1,13 @@
+[Unit]
+Description=ComfyUI server
+After=network-online.target
+
+[Service]
+User=ubuntu
+WorkingDirectory=/home/ubuntu/ComfyUI
+ExecStart=/home/ubuntu/venv/bin/python main.py --listen 0.0.0.0 --port 8188
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
