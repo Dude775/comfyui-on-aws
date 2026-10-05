@@ -1,0 +1,9 @@
+# Copy to terraform.tfvars (git-ignored) and fill in.
+bucket_name   = "CHANGE_ME-comfy-artifacts"
+allowed_cidrs = ["203.0.113.7/32"] # your public IP /32
+notify_email  = "you@example.com"
+
+# purchase_option  = "spot"      # if spot capacity exists in your AZ
+# instance_type    = "g5.xlarge"
+# key_name         = ""          # empty = SSM only
+# gross_budget_usd = 30
