@@ -20,12 +20,12 @@ mkdir -p "$STAGE"
 aws s3 sync "s3://$BUCKET/bootstrap/" "$STAGE/" --region "$REGION" --only-show-errors
 chmod +x "$STAGE"/*.sh "$STAGE"/watchdog/*.sh
 
-# 2. ComfyUI + GGUF loader
+# 2. ComfyUI + GGUF loader (city96 is the canonical GGUF node repo)
 if [ ! -d "$COMFY_HOME" ]; then
   sudo -u ubuntu git clone --depth 1 https://github.com/comfyanonymous/ComfyUI.git "$COMFY_HOME"
 fi
 if [ ! -d "$COMFY_HOME/custom_nodes/ComfyUI-GGUF" ]; then
-  sudo -u ubuntu git clone --depth 1 https://github.com/Comfy-Org/ComfyUI-GGUF.git "$COMFY_HOME/custom_nodes/ComfyUI-GGUF"
+  sudo -u ubuntu git clone --depth 1 https://github.com/city96/ComfyUI-GGUF.git "$COMFY_HOME/custom_nodes/ComfyUI-GGUF"
 fi
 
 sudo -u ubuntu python3 -m venv "$VENV"
