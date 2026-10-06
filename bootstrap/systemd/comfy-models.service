@@ -1,0 +1,15 @@
+[Unit]
+Description=Sync ComfyUI model weights from S3 to instance-store NVMe
+After=network-online.target
+Wants=network-online.target
+Before=comfyui.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+EnvironmentFile=-/etc/default/comfy-models
+ExecStart=/usr/local/bin/comfy-sync-models.sh
+TimeoutStartSec=1800
+
+[Install]
+WantedBy=multi-user.target

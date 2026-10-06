@@ -1,6 +1,7 @@
 [Unit]
 Description=ComfyUI server
-After=network-online.target
+After=network-online.target comfy-models.service
+Requires=comfy-models.service
 
 [Service]
 User=ubuntu
