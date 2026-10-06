@@ -34,8 +34,18 @@ sudo -u ubuntu "$VENV/bin/pip" install torch torchvision --index-url https://dow
 sudo -u ubuntu "$VENV/bin/pip" install -r "$COMFY_HOME/requirements.txt"
 sudo -u ubuntu "$VENV/bin/pip" install -r "$COMFY_HOME/custom_nodes/ComfyUI-GGUF/requirements.txt"
 
+# 3. Model sync runs on EVERY boot (instance-store NVMe is wiped on stop)
+install -m 0755 "$STAGE/sync-models.sh" /usr/local/bin/comfy-sync-models.sh
+cat > /etc/default/comfy-models <<CONF
+BUCKET=$BUCKET
+REGION=$REGION
+CONF
+install -m 0644 "$STAGE/systemd/comfy-models.service" /etc/systemd/system/comfy-models.service
 install -m 0644 "$STAGE/systemd/comfyui.service" /etc/systemd/system/comfyui.service
+
 systemctl daemon-reload
-systemctl enable --now comfyui.service
+systemctl enable comfy-models.service comfyui.service
+systemctl start comfy-models.service
+systemctl start comfyui.service
 
 echo "[bootstrap] done $(date -Is)"
