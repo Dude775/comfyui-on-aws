@@ -21,6 +21,17 @@ variable "instance_type" {
   default     = "g5.xlarge"
 }
 
+variable "purchase_option" {
+  description = "on-demand or spot. Spot is cheaper but capacity is not guaranteed"
+  type        = string
+  default     = "on-demand"
+
+  validation {
+    condition     = contains(["on-demand", "spot"], var.purchase_option)
+    error_message = "purchase_option must be on-demand or spot."
+  }
+}
+
 variable "spot_max_price" {
   description = "Max USD/hour when purchase_option = spot"
   type        = string
@@ -41,6 +52,12 @@ variable "key_name" {
   description = "Optional EC2 key pair for SSH. Leave empty to use SSM Session Manager only"
   type        = string
   default     = ""
+}
+
+variable "root_volume_gb" {
+  description = "Root EBS size. Models live on instance-store NVMe, so this stays small"
+  type        = number
+  default     = 75
 }
 
 variable "notify_email" {
