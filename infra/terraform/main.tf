@@ -15,7 +15,8 @@ data "aws_vpc" "default" {
 }
 
 locals {
-  ami_id = var.ami_id != "" ? var.ami_id : data.aws_ami.dlami[0].id
+  ami_id  = var.ami_id != "" ? var.ami_id : data.aws_ami.dlami[0].id
+  is_spot = var.purchase_option == "spot"
 
   userdata = templatefile("${path.module}/../../bootstrap/userdata.sh.tpl", {
     bucket = var.bucket_name

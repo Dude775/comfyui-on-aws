@@ -6,15 +6,18 @@ resource "aws_instance" "comfy" {
   key_name               = var.key_name != "" ? var.key_name : null
   user_data_base64       = base64gzip(local.userdata)
 
-  # One-time spot: shutdown == terminate, so billing provably stops with the box
-  instance_initiated_shutdown_behavior = "terminate"
+  # On-demand: stop keeps the EBS disk (outputs survive). Spot one-time can only terminate.
+  instance_initiated_shutdown_behavior = local.is_spot ? "terminate" : "stop"
 
-  instance_market_options {
-    market_type = "spot"
-    spot_options {
-      max_price                      = var.spot_max_price
-      spot_instance_type             = "one-time"
-      instance_interruption_behavior = "terminate"
+  dynamic "instance_market_options" {
+    for_each = local.is_spot ? [1] : []
+    content {
+      market_type = "spot"
+      spot_options {
+        max_price                      = var.spot_max_price
+        spot_instance_type             = "one-time"
+        instance_interruption_behavior = "terminate"
+      }
     }
   }
 
@@ -23,7 +26,7 @@ resource "aws_instance" "comfy" {
   }
 
   root_block_device {
-    volume_size           = 100
+    volume_size           = var.root_volume_gb
     volume_type           = "gp3"
     encrypted             = true
     delete_on_termination = true
