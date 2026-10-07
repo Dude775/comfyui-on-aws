@@ -11,8 +11,8 @@ echo "== identity"
 arn=$(aws sts get-caller-identity --query Arn --output text)
 case "$arn" in *":root") bad "running as ROOT - use an IAM user";; *) ok "IAM principal";; esac
 
-echo "== G/VT vCPU quota (on-demand, L-DB2BB8A5)"
-q=$(aws service-quotas get-service-quota --region "$REGION" --service-code ec2 --quota-code L-DB2BB8A5 \
+echo "== G/VT vCPU quota (on-demand, L-DB2E81BA)"
+q=$(aws service-quotas get-service-quota --region "$REGION" --service-code ec2 --quota-code L-DB2E81BA \
   --query 'Quota.Value' --output text 2>/dev/null || echo 0)
 awk "BEGIN{exit !($q >= 4)}" && ok "quota=$q vCPU" || bad "quota=$q vCPU (g5.xlarge needs 4)"
 
