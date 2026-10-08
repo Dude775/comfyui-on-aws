@@ -7,6 +7,7 @@ import pytest
 from comfy_pipeline.graph import (
     GraphError,
     inject,
+    sampler_settings,
     set_input_image,
 )
 
@@ -47,4 +48,12 @@ def test_set_input_image(graph):
 def test_set_input_image_requires_loadimage():
     with pytest.raises(GraphError):
         set_input_image({"1": {"class_type": "KSampler", "inputs": {}}}, "a.png")
+
+
+def test_example_matches_lightning_recipe(graph):
+    """Guardrail: the committed workflow must keep the validated 4-step recipe."""
+    (s,) = sampler_settings(graph)
+    assert s["steps"] == 4
+    assert s["cfg"] == 1.0
+    assert (s["sampler_name"], s["scheduler"]) == ("euler", "simple")
 

@@ -5,8 +5,8 @@
       "seed": 42,
       "steps": 4,
       "cfg": 1.0,
-      "sampler_name": "dpm_2",
-      "scheduler": "karras",
+      "sampler_name": "euler",
+      "scheduler": "simple",
       "denoise": 1.0,
       "model": [
         "20",
