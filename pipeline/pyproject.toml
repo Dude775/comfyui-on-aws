@@ -1,0 +1,9 @@
+[project]
+name = "comfy-pipeline"
+version = "1.0.0"
+description = "Batch client for a remote ComfyUI GPU node"
+requires-python = ">=3.10"
+dependencies = []
+
+[project.scripts]
+comfy-batch = "comfy_pipeline.cli:main"
