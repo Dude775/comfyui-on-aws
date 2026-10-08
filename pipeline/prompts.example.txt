@@ -1,0 +1,4 @@
+# One prompt per line. Lines starting with # are skipped.
+# Real prompts live outside the repo (prompts.txt is git-ignored).
+Change the background to a dark studio with rim lighting
+Make the jacket black leather, keep everything else identical
