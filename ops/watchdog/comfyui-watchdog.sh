@@ -28,6 +28,33 @@
 set -euo pipefail
 
 # ---------------------------------------------------------------------------
+# Config file: /etc/default/comfyui-watchdog (override path with ENV_FILE).
+# Precedence: launch environment > config file > built-in defaults below.
+# systemd already passes the file via EnvironmentFile; sourcing it here as well
+# makes a hand-run (`sudo /usr/local/bin/comfyui-watchdog.sh`) honour the same
+# config, which the installer's "run one tick" step relies on.
+# ---------------------------------------------------------------------------
+ENV_FILE="${ENV_FILE:-/etc/default/comfyui-watchdog}"
+if [ -r "${ENV_FILE}" ]; then
+  _cfg_keys="GPU_UTIL_THRESHOLD IDLE_MINUTES CHECK_INTERVAL_MIN SYNC_INTERVAL_MIN STATE_DIR LOG_PREFIX OUTPUT_DIR S3_BUCKET S3_OUTPUT_PREFIX S3_SYNC_EXTRA_ARGS COMFYUI_URL HOLD_FILE COUNT_ACTIVE_SSH_AS_BUSY DRY_RUN SUDO SHUTDOWN_BIN SHUTDOWN_DELAY NVIDIA_SMI AWS_BIN CURL_BIN"
+  _cfg_saved=""
+  for _k in ${_cfg_keys}; do
+    if [ "${!_k+x}" = "x" ]; then
+      _cfg_saved="${_cfg_saved}${_k}=${!_k}"$'\n'
+    fi
+  done
+  # shellcheck disable=SC1090
+  . "${ENV_FILE}"
+  # Restore values the launch environment supplied, so env beats the file.
+  while IFS= read -r _line; do
+    _k="${_line%%=*}"
+    [ -n "${_k}" ] || continue
+    printf -v "${_k}" '%s' "${_line#*=}"
+  done <<< "${_cfg_saved}"
+  unset _cfg_keys _cfg_saved _k _line
+fi
+
+# ---------------------------------------------------------------------------
 # Defaults (override in /etc/default/comfyui-watchdog)
 # ---------------------------------------------------------------------------
 : "${GPU_UTIL_THRESHOLD:=5}"          # percent; below this counts as idle

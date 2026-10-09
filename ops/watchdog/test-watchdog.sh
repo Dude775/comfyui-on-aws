@@ -141,6 +141,14 @@ echo 0 > "${MOCK}/gpu_util"
 DRY_RUN=1 bash "${WATCHDOG}" >/dev/null 2>&1
 check "no shutdown under DRY_RUN" "[ ! -f ${MOCK}/shutdown_called ]"
 
+echo "== test 10: config file is sourced; launch env wins over it =="
+run
+printf 'GPU_UTIL_THRESHOLD=9999\nIDLE_MINUTES=45\n' > "${TMP}/wd.env"
+echo 0 > "${MOCK}/gpu_util"
+ENV_FILE="${TMP}/wd.env" IDLE_MINUTES=7 bash "${WATCHDOG}" >"${TMP}/out.log" 2>&1
+check "config file value applied (threshold=9999)" "grep -q 'threshold=9999%' ${TMP}/out.log"
+check "launch env overrides file (idle_min=7)" "grep -q 'idle_min=7 ' ${TMP}/out.log"
+
 echo
 echo "RESULT: ${PASS} passed, ${FAIL} failed"
 rm -rf "${TMP}"
