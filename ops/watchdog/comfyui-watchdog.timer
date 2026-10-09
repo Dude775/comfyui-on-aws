@@ -1,0 +1,13 @@
+[Unit]
+Description=Run the ComfyUI GPU-idle watchdog every 5 minutes
+Documentation=file:/usr/local/share/comfyui-watchdog/README.md
+
+[Timer]
+OnBootSec=2min
+OnUnitActiveSec=5min
+AccuracySec=30s
+Persistent=true
+Unit=comfyui-watchdog.service
+
+[Install]
+WantedBy=timers.target
