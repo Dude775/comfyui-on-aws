@@ -33,4 +33,6 @@ resource "aws_instance" "comfy" {
   }
 
   tags = { Name = "${var.project}-node" }
+
+  depends_on = [aws_s3_object.bootstrap]
 }

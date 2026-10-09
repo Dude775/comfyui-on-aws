@@ -43,6 +43,10 @@ CONF
 install -m 0644 "$STAGE/systemd/comfy-models.service" /etc/systemd/system/comfy-models.service
 install -m 0644 "$STAGE/systemd/comfyui.service" /etc/systemd/system/comfyui.service
 
+# 4. Cost backstop
+sed -i "s|^S3_BUCKET=.*|S3_BUCKET=$BUCKET|" "$STAGE/watchdog/comfyui-watchdog.env"
+bash "$STAGE/watchdog/install.sh"
+
 systemctl daemon-reload
 systemctl enable comfy-models.service comfyui.service
 systemctl start comfy-models.service
