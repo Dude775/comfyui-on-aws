@@ -44,7 +44,10 @@ set -euo pipefail
 : "${HOLD_FILE:=${STATE_DIR}/hold}"
 : "${COUNT_ACTIVE_SSH_AS_BUSY:=1}"     # 1 = an interactive login blocks shutdown
 : "${DRY_RUN:=0}"                      # 1 = log shutdown instead of doing it
-: "${SUDO:=sudo}"
+# SUDO: honor an explicit value; otherwise auto-detect (root needs none).
+if [ -z "${SUDO+x}" ]; then
+  if [ "$(id -u)" -eq 0 ]; then SUDO=""; else SUDO="sudo"; fi
+fi
 : "${SHUTDOWN_BIN:=/usr/sbin/shutdown}"
 : "${SHUTDOWN_DELAY:=now}"             # 'now' or '+1' (grace minute)
 : "${NVIDIA_SMI:=nvidia-smi}"
@@ -172,7 +175,7 @@ main() {
   # Serialise runs. If the lock cannot be created we still proceed (a missed
   # lock is preferable to skipping the check entirely).
   lock_ok=0
-  if exec 9>"${LOCK_FILE}" 2>/dev/null; then lock_ok=1; fi
+  if exec 9>"${LOCK_FILE}"; then lock_ok=1; fi
   if [ "${lock_ok}" = "1" ] && command -v flock >/dev/null 2>&1; then
     flock -n 9 || { log "another run in progress, exiting"; exit 0; }
   elif [ "${lock_ok}" = "0" ]; then
