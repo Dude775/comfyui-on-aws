@@ -65,6 +65,12 @@ variable "notify_email" {
   type        = string
 }
 
+variable "gross_budget_usd" {
+  description = "Monthly GROSS spend (before credits) that triggers alerts"
+  type        = number
+  default     = 30
+}
+
 variable "ami_id" {
   description = "Manual AMI override. Empty = latest AWS Deep Learning AMI (Ubuntu 22.04)"
   type        = string

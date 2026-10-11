@@ -19,3 +19,21 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "artifacts" {
     }
   }
 }
+
+# Generated images are disposable: expire them so storage cost cannot creep
+resource "aws_s3_bucket_lifecycle_configuration" "artifacts" {
+  bucket = aws_s3_bucket.artifacts.id
+
+  rule {
+    id     = "expire-outputs"
+    status = "Enabled"
+
+    filter {
+      prefix = "outputs/"
+    }
+
+    expiration {
+      days = 30
+    }
+  }
+}
