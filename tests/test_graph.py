@@ -7,6 +7,7 @@ import pytest
 from comfy_pipeline.graph import (
     GraphError,
     inject,
+    latent_source,
     sampler_settings,
     set_input_image,
 )
@@ -57,3 +58,7 @@ def test_example_matches_lightning_recipe(graph):
     assert s["cfg"] == 1.0
     assert (s["sampler_name"], s["scheduler"]) == ("euler", "simple")
 
+
+def test_edit_graph_encodes_source_image(graph):
+    """Regression: EmptyLatentImage here makes the model ignore the input photo."""
+    assert latent_source(graph) == "VAEEncode"
