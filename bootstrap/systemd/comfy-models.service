@@ -2,6 +2,8 @@
 Description=Sync ComfyUI model weights from S3 to instance-store NVMe
 After=network-online.target
 Wants=network-online.target
+# The NVMe race fix: do not start until the instance store is mounted
+RequiresMountsFor=/opt/dlami/nvme
 Before=comfyui.service
 
 [Service]
