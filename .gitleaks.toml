@@ -1,0 +1,13 @@
+title = "comfyui-on-aws secret scan"
+
+[extend]
+useDefault = true
+
+[[rules]]
+id = "aws-account-id"
+description = "12-digit AWS account id in an ARN"
+regex = '''arn:aws:[a-z0-9-]+:[a-z0-9-]*:\d{12}:'''
+
+[allowlist]
+description = "IAM managed-policy ARNs carry 'aws' instead of an account id"
+regexes = ['''arn:aws:iam::aws:policy/''']
