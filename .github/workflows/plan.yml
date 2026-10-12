@@ -1,0 +1,33 @@
+# Manual plan against the real account. Uses GitHub OIDC -> IAM role, so no long-lived
+# AWS keys exist anywhere in this repo or its secrets.
+name: terraform-plan
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    environment: aws
+    defaults:
+      run:
+        working-directory: infra/terraform
+    env:
+      TF_VAR_bucket_name: ${{ vars.BUCKET_NAME }}
+      TF_VAR_notify_email: ${{ vars.NOTIFY_EMAIL }}
+      TF_VAR_allowed_cidrs: ${{ vars.ALLOWED_CIDRS }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_PLAN_ROLE_ARN }}
+          aws-region: us-east-1
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.9.8
+      - run: terraform init -input=false
+      - run: terraform plan -input=false -lock=false -no-color
